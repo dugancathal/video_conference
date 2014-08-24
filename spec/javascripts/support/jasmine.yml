@@ -11,6 +11,7 @@
 #   - dist/**/*.js
 #
 src_files:
+  - lib/video_conference/public/javascripts/vendor/*.js
   - lib/video_conference/public/javascripts/**/*.js
 
 # stylesheets
