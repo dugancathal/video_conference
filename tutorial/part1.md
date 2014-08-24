@@ -96,13 +96,9 @@ Let's go ahead and make a simple `layout.haml` and `index.haml`.
 ```
 
 You may have noticed up above that we've got a few vendored JS files including
-[jquery](http://code.jquery.com/jquery-2.1.1.min.js),
-[angular](https://code.angularjs.org/1.3.0-beta.19/angular.js),
-and something weird called [adapter](https://webrtc.googlecode.com/svn/stable/samples/js/base/adapter.js).
+[jquery](http://code.jquery.com/jquery-2.1.1.min.js), [angular](https://code.angularjs.org/1.3.0-beta.19/angular.js), and something weird called [adapter](https://webrtc.googlecode.com/svn/stable/samples/js/base/adapter.js).
 This adapter is a polyfill that gets all browsers on the same page (or at least Chrome
-and Firefox).
-
-You can download all those with a few curl commands:
+and Firefox). You can download all these with a few curl commands:
 
 ```bash
 curl https://webrtc.googlecode.com/svn/stable/samples/js/base/adapter.js > lib/video_conference/public/javascripts/vendor/adapter.js
@@ -110,11 +106,11 @@ curl https://code.angularjs.org/1.3.0-beta.19/angular.js > lib/video_conference/
 curl https://code.jquery.com/jquery-2.1.1.min.js > lib/video_conference/public/javascripts/vendor/jquery.js
 ```
 
-Now, if you run `rackup -p 9292`, you can see our handywork in action at
+Now, if you run `rackup -p 9292`, you can see our handiwork in action at
 `http://localhost:9292`.
 
-For those that don't feel like typing, you can see the app so far by cloning and
-checking out the tag `step1`.
+For those that don't feel like typing, you can see the app so far by cloning the repo
+and checking out the `step1` tag.
 
 ## The fun stuff
 
@@ -242,11 +238,22 @@ it('uses $sce to trust the URL', function () {
 There are more specs than this, but these two cover the interesting bits.
 The first is that the promise our service returns is resolved with the stream
 representing the local user's media. We pass this to the built-in function
-`URL.createObjectURL` which returns a blob URL. This, in turn, gets sent through
-the Angular `$sce` service to let us put this on the page.
+`URL.createObjectURL` which returns a blob URL.
 
-In the event the user decides _not_ to grant us permission to use their media devices,
-our promise will be rejected and we let them know they did something silly.
+By default, Angular does white-listing of any content that actually
+makes it out of the controller. One of the things Angular doesn't trust is blob
+URLs, like the one we get from WebRTC. In order to set the `src` attribute of
+our `<video>`, we need to make Angular trust us. We can do this using Angular's
+`$sce` service and its `#trustAsResourceUrl` method.
+
+After we obtain a 'safe' URL for our local media stream, we can place it in a
+video element. We'll update our `index.haml` template to show it. (Don't forget
+to add a script tag to the `layout.haml` to include our JS code).
+
+Also, in the event the user decides _not_ to grant us permission to use their media devices,
+our promise will be rejected and we let them know they did something silly. The
+rejection is passed an error from RTC, but at this point, we really don't care _why_
+we can't get media, we just care that we didn't.
 
 ```javascript
 // lib/video_conference/public/javascripts/app.js
@@ -255,14 +262,12 @@ our promise will be rejected and we let them know they did something silly.
   function ($scope, $sce, UserMedia) {
     UserMedia.get().then(function (stream) {
       $scope.url = $sce.trustAsResourceUrl(window.URL.createObjectURL(stream));
+    }, function () {
+      $scope.errorMessage = "What'd you do?!";
     });
   }
 ]);
 ```
-
-After we obtain a 'safe' URL for our local media stream, we can place it in a
-video element. Let's update our `index.haml` template to show it. (Don't forget
-to add a script tag to the `layout.haml` to include our code).
 
 ```haml
 # lib/video_conference/views/index.haml
@@ -279,4 +284,8 @@ you'll then be faced with, well, your face.
 ## There you have it
 
 And there it is, part 1 complete in two steps - kind of. This is tagged on the repo
-as `step2` for those that don't want to follow along.
+as `step2` for those following along.
+
+In the next part of the series, we'll work on signalling: the process by which
+the browsers will exchange initial information before they actually form a peer-to-peer
+connection.
