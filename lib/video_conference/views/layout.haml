@@ -1,0 +1,16 @@
+!!! html
+%html
+  %head
+    %title Video Conference
+    %link(href='/stylesheets/app.css' rel='stylesheet' type='text/css')
+    
+    %script(src='/javascripts/jquery.js' type='text/javascript')
+    %script(src='/javascripts/adapter.js' type='text/javascript')
+    %script(src='/javascripts/angular.js' type='text/javascript')
+    
+    %script(src='/javascripts/angular_app.js' type='text/javascript')
+    %script(src='/javascripts/directives.js' type='text/javascript')
+    %script(src='/javascripts/rtc.js' type='text/javascript')
+  %body
+    %h1 Video Conference
+    = yield
