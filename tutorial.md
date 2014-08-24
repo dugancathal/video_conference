@@ -202,7 +202,7 @@ now write some Angular that lets us grab the user's camera and microphone.
 angular.module('video_conference', [])
   .service('UserMedia', ['$q', function ($q) {
     return {
-      get: function () {
+      get: function () {  
         var mediaDeferred = $q.defer();
         getUserMedia({video: true, audio: true}, mediaDeferred.resolve, mediaDeferred.reject);
         return mediaDeferred.promise;
@@ -265,6 +265,7 @@ video element. Let's update our `index.haml` template to show it. (Don't forget
 to add a script tag to the `layout.haml` to include our code).
 
 ```haml
+# lib/video_conference/views/index.haml
 .container
   #local-video
     %video(ng-if='url' muted='muted' autoplay='autoplay' controls='controls' ng-src='{{url}}')
