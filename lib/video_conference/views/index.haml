@@ -1,2 +1,4 @@
-.container
+.container(ng-app='video_conference' ng-controller='MainCtrl')
   #local-video
+    %video(ng-if='url' muted='muted' autoplay='autoplay' ng-src='{{url}}')
+    %p(ng-if='errorMessage') {{errorMessage}}
