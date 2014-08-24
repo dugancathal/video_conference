@@ -1,30 +1,35 @@
 # VideoConference
 
-TODO: Write a gem description
+A tutorial app for AngularJS and WebRTC.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+This "gem" is intended to be cloned and played with.
 
-```ruby
-gem 'video_conference'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install video_conference
+    git clone https://github.com/dugancathal/video_conference.git
 
 ## Usage
 
-TODO: Write usage instructions here
+After cloning, you should just need to `bundle` and `rackup`.
+
+    bundle install
+    rackup -p 9292 -E production # You need the production for Faye
+
+## Tags
+
+There are a bunch of tags for the various steps of the tutorial.
+
+### step1
+
+The app boots ... that's about it
+
+### step2
+
+The app has a local video on the main page.
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/video_conference/fork )
+1. Fork it ( https://github.com/dugancathal/video_conference/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
