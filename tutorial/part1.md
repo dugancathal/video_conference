@@ -1,4 +1,4 @@
-# Test-Driven WebRTC with AngularJS
+# Test-Driven WebRTC with AngularJS: GetUserMedia
 
 One of the newest and most exciting web technologies we're working with now-a-days
 is WebRTC. In the browsers that support it, this collection of APIs lets
@@ -161,6 +161,6 @@ you'll then be faced with, well, your face.
 
 The code up to this point is tagged on the repo as `step2` for those following along.
 
-In the next part of the series, we'll work on signalling: the process by which
+In the next part of the series, we'll work on signaling: the process by which
 the browsers will exchange initial information before they actually form a peer-to-peer
 connection.
