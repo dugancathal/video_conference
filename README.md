@@ -19,11 +19,11 @@ After cloning, you should just need to `bundle` and `rackup`.
 
 There are a bunch of tags for the various steps of the tutorial.
 
-### step1
+### step0
 
 The app boots ... that's about it
 
-### step2
+### step1
 
 The app has a local video on the main page.
 
