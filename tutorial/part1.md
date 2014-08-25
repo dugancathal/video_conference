@@ -10,138 +10,15 @@ app using both WebRTC and AngularJS, as well as hopefully cover some of the
 lesser-explained pieces of WebRTC. Anyone that wants to follow along at the
 command line can [clone the repo](https://github.com/dugancathal/video_conference).
 
-## Getting started
+## Video on the page
 
-First, we'll start with some boilerplate; let's get a simple web-app going. I'm
-running __Ruby 2.1.2__.
-
-__Note: While it's not necessary at all to do this within a gem, I just like that
-I get all the structure for free.__
-
-```bash
-bundle gem video_conference
-cd video_conference
-```
-
-Add Sinatra, Thin, and Haml to your gemspec. You could start with WEBrick for now,
-but we'll be needing Thin later, so might as well start there. I also added Jasmine
-and left the defaults in place.
-
-```ruby
-spec.add_dependency 'sinatra', '~> 1.4.5'
-spec.add_dependency 'thin', '~> 1.6.2'
-spec.add_dependency 'haml', '~> 4.0.5'
-
-spec.add_development_dependency "jasmine", "~> 2.0.2"
-```
-
-You'll also need a `config.ru` in the top level of our "gem".
-
-```ruby
-require 'video_conference/app'
-
-map '/' do
-  run VideoConference::App
-end
-```
-
-As you can tell from that previous snippet, we'll need an App class. Let's add that now.
-
-```ruby
-# lib/video_conference/app.rb
-require 'sinatra/base'
-
-module VideoConference
-  class App < Sinatra::Base
-    get '/' do
-      haml :index
-    end
-  end
-end
-```
-
-This makes a few assumptions about the structure of our project, and gives a few
-things for free:
-
-1. There is a `views` directory in at the same level as our App class.
-2. There is a `public` directory at the same level as our App class that will get
-   served directly.
-3. There is an `index.haml` file in our `views` directory that will get served
-   when we visit '/'.
-4. There is an (optional) `layout.haml` file in our `views` directory that calls
-   `yield` somewhere in it.
-
-Let's go ahead and make a simple `layout.haml` and `index.haml`.
-
-```haml
-# lib/video_conference/views/layout.haml
-!!! html
-%html
-  %head
-    %title Video Conference
-    %link(href='/stylesheets/app.css' rel='stylesheet' type='text/css')
-
-    %script(src='/javascripts/vendor/jquery.js' type='text/javascript')
-    %script(src='/javascripts/vendor/adapter.js' type='text/javascript')
-    %script(src='/javascripts/vendor/angular.js' type='text/javascript')
-  %body
-    %h1 Video Conference
-    = yield
-```
-
-```haml
-# lib/video_conference/views/index.haml
-.container
-  #local-video
-```
-
-You may have noticed up above that we've got a few vendored JS files including
-[jquery](http://code.jquery.com/jquery-2.1.1.min.js), [angular](https://code.angularjs.org/1.3.0-beta.19/angular.js), and something weird called [adapter](https://webrtc.googlecode.com/svn/stable/samples/js/base/adapter.js).
-This adapter is a polyfill that gets all browsers on the same page (or at least Chrome
-and Firefox). You can download all these with a few curl commands:
-
-```bash
-curl https://webrtc.googlecode.com/svn/stable/samples/js/base/adapter.js > lib/video_conference/public/javascripts/vendor/adapter.js
-curl https://code.angularjs.org/1.3.0-beta.19/angular.js > lib/video_conference/public/javascripts/vendor/angular.js
-curl https://code.jquery.com/jquery-2.1.1.min.js > lib/video_conference/public/javascripts/vendor/jquery.js
-```
-
-Now, if you run `rackup -p 9292`, you can see our handiwork in action at
-`http://localhost:9292`.
-
-For those that don't feel like typing, you can see the app so far by cloning the repo
-and checking out the `step1` tag.
-
-## The fun stuff
-
-Now that we have a place to put our videos, we can actually get on to the
-real work.
-
-### Well, almost.
-
-Let's get Jasmine set up first.
-
-    jasmine init
-
-Then we'll need to update the location of your `src_files` so Jasmine can find
-our code. Leave all the other defaults in place.
-
-```yaml
-# spec/javascripts/support/jasmine.yml
-# ...
-src_files:
-  - lib/video_conference/public/javascripts/**/*.js
-# ...
-```
-
-We can finally begin writing some RTC code.
-
-### Video on the page
+_I'm assuming here that you already have a web server of some sort in place for all of
+the code below. If you don't, take a look at the [setup](setup.md) tutorial._
 
 The RTC APIs define one very handy function for retrieving a user's media, aptly
 named `getUserMedia`. Of course, it's not so easy most of the time (both Chrome and
-Firefox have it under a vendor prefix), but because of the `adapter` we included
-earlier, we can ignore that.
+Firefox have it under a vendor prefix), but Google provides an `adapter` file that
+shims the APIs across Firefox and Chrome
 
 And now ... it's time for a test! Really, there are two things that we need to
 make sure of:
@@ -247,13 +124,12 @@ our `<video>`, we need to make Angular trust us. We can do this using Angular's
 `$sce` service and its `#trustAsResourceUrl` method.
 
 After we obtain a 'safe' URL for our local media stream, we can place it in a
-video element. We'll update our `index.haml` template to show it. (Don't forget
-to add a script tag to the `layout.haml` to include our JS code).
+video element. We'll update our HTML template to show it.
 
 Also, in the event the user decides _not_ to grant us permission to use their media devices,
 our promise will be rejected and we let them know they did something silly. The
-rejection is passed an error from RTC, but at this point, we really don't care _why_
-we can't get media, we just care that we didn't.
+rejection is also passed an error from RTC, but at this point, we really don't
+care _why_ we can't get media, we just care that we didn't.
 
 ```javascript
 // lib/video_conference/public/javascripts/app.js
@@ -283,8 +159,7 @@ you'll then be faced with, well, your face.
 
 ## There you have it
 
-And there it is, part 1 complete in two steps - kind of. This is tagged on the repo
-as `step2` for those following along.
+The code up to this point is tagged on the repo as `step2` for those following along.
 
 In the next part of the series, we'll work on signalling: the process by which
 the browsers will exchange initial information before they actually form a peer-to-peer
