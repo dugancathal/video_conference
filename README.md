@@ -27,6 +27,10 @@ The app boots ... that's about it
 
 The app has a local video on the main page.
 
+### step2
+
+A signaler is born.
+
 ## Contributing
 
 1. Fork it ( https://github.com/dugancathal/video_conference/fork )
