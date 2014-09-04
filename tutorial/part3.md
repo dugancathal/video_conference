@@ -10,7 +10,9 @@ To start, when a client enters the room, they have to let everyone else know the
 entered. I've heard this called an "Announcement", which as good of a name as any,
 so that's what we'll call it here.
 
+
 After receiving an `Announcement`, one (and exactly one) client must create an `RTCPeerConnection`.
+
 This connection object can create an offer using the `createOffer` method and
 send that to the other peer (`OfferDescriptionMessage`). The peer must send an
 answer (created using `createAnswer` - `AnswerDescriptionMessage`), and a session
@@ -139,15 +141,15 @@ returning all the pieces we need for RTC to do its job.
 
 #### A quick aside about `PeerConnection`
 
-The PeerConnection object is an interesting one - one _could_ leave it completely
-out of this architecture and be perfectly okay. I'm wrapping
+The PeerConnection object is an interesting one - one _could_ leave it completely out of this architecture and be perfectly okay. I'm wrapping
 `RTCPeerConnection` for two very important reasons:
 
 1. I prefer dealing with promises over dealing with callbacks, and all of the
   `RTCPeerConnection` API is written in callbacks. Promises are easier to test
   in my opinion and they make for cleaner code.
-2. I prefer mocking my own "library" in my `PeerConnection` tests. This means
-  testing what I've built and not what WebRTC has mandated.
+2. I prefer mocking my own "library" in my PeerConnector tests and keeping the
+  logic in those tests concerned with APIs that I've built and not what WebRTC
+  has mandated.
 
 ### The Message Objects
 
@@ -158,7 +160,7 @@ As I'm traditionally a Ruby developer and a huge fan of the [Command Pattern](ht
 I went down the path of messages as dynamically-created command objects. This is
 one of those instances where a little meta-programming is gonna save us some code.
 
-First, we'll go back to the __sending__ of all of our messages and add a `type`
+First, we'll go back to the sending of all of our sent messages and add a `type`
 property. This will allow us to create the correct message types as the receiver.
 
 Then we can add a static method on our Message factory that does the decoding for
@@ -194,7 +196,8 @@ describe('Message', function () {
 });
 ```
 
-After we inject the `$injector` service (and look at the Angular docs for a "few" minutes),
+
+After we inject the `$injector` service (and look at the Angular docs for a few minutes),
 the implementation is straightforward. Note the inclusion of a `SAFE_MESSAGES` list
 to only let known message types through.
 
@@ -246,6 +249,7 @@ init: function (roomName) {
 And with that, we've got a Signaling framework in place.
 
 ## Up Next
+
 
 Now that we've got the sender working properly (mostly), the receiver needs some love.
 Keep an eye out for next time when we talk about ICE and PeerConnections more in depth.
