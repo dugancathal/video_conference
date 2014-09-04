@@ -78,4 +78,20 @@ describe('Signaler', function () {
       expect(Signaler.sendToRoom).toHaveBeenCalledWith(expectedMessage);
     });
   });
+
+  describe('onMessage', function () {
+    it('instantiates the message type', function () {
+      spyOn(Message, 'build');
+
+      var onMessage;
+      spyOn(Channel, 'subscribe').and.callFake(function (callback) {
+        onMessage = callback;
+      });
+
+      Signaler.init('/my-room');
+
+      onMessage.call(this, {type: 'IceCandidateMessage', message: 'content'});
+      expect(Message.build).toHaveBeenCalledWith({type: 'IceCandidateMessage', message: 'content'});
+    });
+  });
 });
