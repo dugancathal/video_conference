@@ -97,5 +97,20 @@ describe('Signaler', function () {
       expect(Message.build).toHaveBeenCalledWith({type: 'IceCandidateMessage', message: 'content'});
       expect(iceMessage.exec).toHaveBeenCalled();
     });
+
+    it('ignores messages from self', function () {
+      spyOn(Channel, 'clientId').and.returnValue('me');
+
+      spyOn(Message, 'build');
+      var onMessage;
+      spyOn(Channel, 'subscribe').and.callFake(function (callback) {
+        onMessage = callback;
+      });
+
+      Signaler.init('/my-room');
+
+      onMessage.call(this, {type: 'IceCandidateMessage', from: 'me'});
+      expect(Message.build).not.toHaveBeenCalled();
+    });
   });
 });
