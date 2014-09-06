@@ -11,7 +11,7 @@
     %script(src='/faye/faye.js' type='text/javascript')
 
     %script(src='/javascripts/app.js' type='text/javascript')
-    - %w(channel user_media signaler messages peer_connection).each do |jsfile|
+    - %w(channel user_media signaler messages peer_connection peer_connector).each do |jsfile|
       %script(src="/javascripts/#{jsfile}.js" type='text/javascript')
   %body
     %h1 Video Conference
