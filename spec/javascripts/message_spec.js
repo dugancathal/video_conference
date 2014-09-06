@@ -1,18 +1,17 @@
 describe('Message', function () {
-  describe('Message.build', function () {
-    var FakeMessage, Message;
-    beforeEach(function () {
-      module('video_conference', function ($provide) {
-        FakeMessage = function FakeMessage() {};
-        $provide.value('FakeMessage', FakeMessage);
-        $provide.value('Faye', {});
-        $provide.value('SAFE_MESSAGES', ['FakeMessage']);
-      });
+  var FakeMessage, Message;
 
-      inject(function (_Message_) {
-        Message = _Message_;
-      });
-    });
+  beforeEach(module('video_conference', function ($provide) {
+    FakeMessage = function FakeMessage() {};
+    $provide.value('FakeMessage', FakeMessage);
+    $provide.value('Faye', {});
+    $provide.value('SAFE_MESSAGES', ['FakeMessage']);
+  }));
+
+  describe('Message.build', function () {
+    beforeEach(inject(function (_Message_) {
+      Message = _Message_;
+    }));
 
     it('returns a message of the given type', function () {
       var m = Message.build({type: 'FakeMessage'});
@@ -28,6 +27,58 @@ describe('Message', function () {
       spyOn(window, 'RTCPeerConnection');
       var m = Message.build({type: 'PeerConnection'});
       expect(m).toBeUndefined();
+    });
+  });
+
+  describe('AnnouncementMessage', function () {
+    describe('#exec', function () {
+      it('calls PeerConnector.createOffer', inject(function(AnnouncementMessage, PeerConnector) {
+        var m = new AnnouncementMessage({to: 'you', from: 'me'});
+        spyOn(PeerConnector, 'createOffer');
+
+        m.exec();
+
+        expect(PeerConnector.createOffer).toHaveBeenCalledWith({}, 'me');
+      }));
+    });
+  });
+
+  describe('AnswerDescriptionMessage', function () {
+    describe('#exec', function () {
+      it('calls PeerConnector.connect', inject(function(AnswerDescriptionMessage, PeerConnector) {
+        var m = new AnswerDescriptionMessage({to: 'you', from: 'me', description: 'imma description'});
+        spyOn(PeerConnector, 'connect');
+
+        m.exec();
+
+        expect(PeerConnector.connect).toHaveBeenCalledWith('me', 'imma description');
+      }));
+    });
+  });
+
+  describe('OfferDescriptionMessage', function () {
+    describe('#exec', function () {
+      it('calls PeerConnector.createAnswer', inject(function(OfferDescriptionMessage, PeerConnector) {
+        var m = new OfferDescriptionMessage({to: 'you', from: 'me', description: 'imma description'});
+        spyOn(PeerConnector, 'createAnswer');
+
+        m.exec();
+
+        expect(PeerConnector.createAnswer).toHaveBeenCalledWith({}, 'me', 'imma description');
+      }));
+    });
+  });
+
+  describe('IceCandidateMessage', function () {
+    describe('#exec', function () {
+      it('calls PeerConnector.addIceCandidateTo', inject(function(IceCandidateMessage, PeerConnector) {
+        var m = new IceCandidateMessage({to: 'you', from: 'me', candidate: 'imma candidate'});
+        spyOn(PeerConnector, 'addIceCandidateTo');
+
+        m.exec();
+
+        expect(PeerConnector.addIceCandidateTo).toHaveBeenCalledWith('me', {to: 'you', from: 'me', candidate: 'imma candidate'});
+      }));
     });
   });
 });

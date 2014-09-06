@@ -1,17 +1,18 @@
 describe('Signaler', function () {
   beforeEach(module('video_conference'));
 
-  var Signaler, Channel, Message, Faye, subscription;
+  var Signaler, Channel, Message, IceCandidateMessage, Faye, subscription;
 
   beforeEach(function () {
     var installation = installFakeFaye(module, inject);
     Faye = installation.Faye, fayeClient = installation.fayeClient;
   });
 
-  beforeEach(inject(function (_Signaler_, _Channel_, _Message_, $q) {
+  beforeEach(inject(function (_Signaler_, _Channel_, _Message_, _IceCandidateMessage_) {
     Signaler = _Signaler_;
     Channel = _Channel_;
     Message = _Message_;
+    IceCandidateMessage = _IceCandidateMessage_;
   }));
 
   describe('.init', function () {
@@ -80,8 +81,10 @@ describe('Signaler', function () {
   });
 
   describe('onMessage', function () {
-    it('instantiates the message type', function () {
-      spyOn(Message, 'build');
+    it('calls exec on the message type', function () {
+      var iceMessage = new IceCandidateMessage({to: 'you', from: 'me'});
+      spyOn(iceMessage, 'exec');
+      spyOn(Message, 'build').and.returnValue(iceMessage);
 
       var onMessage;
       spyOn(Channel, 'subscribe').and.callFake(function (callback) {
@@ -92,6 +95,7 @@ describe('Signaler', function () {
 
       onMessage.call(this, {type: 'IceCandidateMessage', message: 'content'});
       expect(Message.build).toHaveBeenCalledWith({type: 'IceCandidateMessage', message: 'content'});
+      expect(iceMessage.exec).toHaveBeenCalled();
     });
   });
 });
