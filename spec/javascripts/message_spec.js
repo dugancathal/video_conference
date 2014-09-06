@@ -1,9 +1,11 @@
 describe('Message', function () {
-  var FakeMessage, Message;
+  var FakeMessage, Message, PeerConnectionConfig;
 
   beforeEach(module('video_conference', function ($provide) {
     FakeMessage = function FakeMessage() {};
+    PeerConnectionConfig = jasmine.createSpy('PeerConnectionConfig');
     $provide.value('FakeMessage', FakeMessage);
+    $provide.value('PeerConnectionConfig', PeerConnectionConfig);
     $provide.value('Faye', {});
     $provide.value('SAFE_MESSAGES', ['FakeMessage']);
   }));
@@ -36,9 +38,11 @@ describe('Message', function () {
         var m = new AnnouncementMessage({to: 'you', from: 'me'});
         spyOn(PeerConnector, 'createOffer');
 
+        PeerConnectionConfig.and.returnValue({config: 'value'});
+
         m.exec();
 
-        expect(PeerConnector.createOffer).toHaveBeenCalledWith({}, 'me');
+        expect(PeerConnector.createOffer).toHaveBeenCalledWith({config: 'value'}, 'me');
       }));
     });
   });
@@ -62,9 +66,11 @@ describe('Message', function () {
         var m = new OfferDescriptionMessage({to: 'you', from: 'me', description: 'imma description'});
         spyOn(PeerConnector, 'createAnswer');
 
+        PeerConnectionConfig.and.returnValue({config: 'value'});
+
         m.exec();
 
-        expect(PeerConnector.createAnswer).toHaveBeenCalledWith({}, 'me', 'imma description');
+        expect(PeerConnector.createAnswer).toHaveBeenCalledWith({config: 'value'}, 'me', 'imma description');
       }));
     });
   });
