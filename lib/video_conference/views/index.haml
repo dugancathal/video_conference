@@ -2,3 +2,5 @@
   #local-video
     %video(ng-if='url' muted='muted' autoplay='autoplay' ng-src='{{url}}')
     %p(ng-if='errorMessage') {{errorMessage}}
+  #remote-videos
+    %video(ng-repeat='streamUrl in streamUrls' muted='muted' autoplay='autoplay' controls='controls' ng-src='{{url}}')
