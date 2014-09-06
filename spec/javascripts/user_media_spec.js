@@ -22,13 +22,25 @@ describe('UserMedia', function () {
       expect(window.getUserMedia.calls.first().args[0]).toEqual({audio: true, video: true});
     });
 
-    it('returns a promise for success', function () {
-      var didIt = false;
-      UserMedia.get().then(function () { didIt = true });
-      successCallback();
-      $rootScope.$digest();
+    describe('on success', function () {
+      it('returns a promise for success', function () {
+        var didIt = false;
+        UserMedia.get().then(function () {
+          didIt = true
+        });
+        successCallback();
+        $rootScope.$digest();
 
-      expect(didIt).toBeTruthy();
+        expect(didIt).toBeTruthy();
+      });
+
+      it('sets the UserMedia stream', function () {
+        UserMedia.get();
+
+        successCallback('stream');
+
+        expect(UserMedia.getStream()).toEqual('stream');
+      });
     });
 
     it('returns a promise for failure', function () {
