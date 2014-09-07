@@ -49,14 +49,14 @@ describe('PeerConnector', function () {
     });
 
     it('adds the peerConnection to the list of peers', function () {
-      PeerConnector.createOffer(null, 'my-peer-id');
+      PeerConnector.createOffer('my-peer-id');
 
       expect(PeerConnector.getPeer('my-peer-id')).toEqual(fakePeerConnection);
     });
 
     it('calls addStream with the UserMedia stream', function () {
       spyOn(UserMedia, 'getStream').and.returnValue('stream');
-      PeerConnector.createOffer(null, 'my-peer-id');
+      PeerConnector.createOffer('my-peer-id');
       expect(fakePeerConnection.addStream).toHaveBeenCalledWith('stream');
     });
 
@@ -78,7 +78,7 @@ describe('PeerConnector', function () {
     });
 
     it('sends the description to the peerId after it is set locally', function () {
-      PeerConnector.createOffer(null, 'peer-id');
+      PeerConnector.createOffer('peer-id');
       offerDeferred.resolve({imma: 'local description'});
       $scope.$digest();
 
@@ -104,14 +104,14 @@ describe('PeerConnector', function () {
 
     it('calls addStream with the UserMedia stream', function () {
       spyOn(UserMedia, 'getStream').and.returnValue('stream');
-      PeerConnector.createAnswer(null, 'my-peer-id');
+      PeerConnector.createAnswer('my-peer-id');
       expect(fakePeerConnection.addStream).toHaveBeenCalledWith('stream');
     });
 
     it('sets the remote description of the connection', function () {
       spyOn(window, 'RTCSessionDescription').and.returnValue({fake: 'description'});
       spyOn(fakePeerConnection, 'setRemoteDescription').and.callThrough();
-      PeerConnector.createAnswer(null, null, {imma: 'remote description'});
+      PeerConnector.createAnswer(null, {imma: 'remote description'});
 
       expect(window.RTCSessionDescription).toHaveBeenCalledWith({imma: 'remote description'});
       expect(fakePeerConnection.setRemoteDescription).toHaveBeenCalledWith({fake: 'description'});
@@ -119,7 +119,7 @@ describe('PeerConnector', function () {
 
     it('creates the answer after the remote description is set', function () {
       spyOn(fakePeerConnection, 'createAnswer').and.callThrough();
-      PeerConnector.createAnswer(null, null, {imma: 'remote description'});
+      PeerConnector.createAnswer(null, {imma: 'remote description'});
 
       setRemoteDescriptionDeferred.resolve();
       $scope.$digest();
@@ -129,7 +129,7 @@ describe('PeerConnector', function () {
 
     it('sets the answer as the local description', function () {
       spyOn(fakePeerConnection, 'setLocalDescription').and.callThrough();
-      PeerConnector.createAnswer(null, null, {imma: 'remote description'});
+      PeerConnector.createAnswer(null, {imma: 'remote description'});
 
       setRemoteDescriptionDeferred.resolve();
       $scope.$digest();
@@ -141,7 +141,7 @@ describe('PeerConnector', function () {
     });
 
     it('sends the answer to the peerId after it is set locally', function () {
-      PeerConnector.createAnswer(null, 'peer-id');
+      PeerConnector.createAnswer('peer-id');
 
       setRemoteDescriptionDeferred.resolve();
       $scope.$digest();

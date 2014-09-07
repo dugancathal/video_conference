@@ -42,7 +42,7 @@ describe('Message', function () {
 
         m.exec();
 
-        expect(PeerConnector.createOffer).toHaveBeenCalledWith({config: 'value'}, 'me');
+        expect(PeerConnector.createOffer).toHaveBeenCalledWith('me');
       }));
     });
   });
@@ -70,7 +70,7 @@ describe('Message', function () {
 
         m.exec();
 
-        expect(PeerConnector.createAnswer).toHaveBeenCalledWith({config: 'value'}, 'me', 'imma description');
+        expect(PeerConnector.createAnswer).toHaveBeenCalledWith('me', 'imma description');
       }));
     });
   });
