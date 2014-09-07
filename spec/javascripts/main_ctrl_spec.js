@@ -1,12 +1,14 @@
 describe('MainCtrl', function () {
-  var $scope, FakeUserMedia, Signaler, initDeferred;
+  var $scope, FakeUserMedia, Signaler, initDeferred, mediaDeferred, roomNameFactory;
 
   beforeEach(module('video_conference', function ($provide) {
     Signaler = {
       init: function () {},
       sendToRoom: function () {}
     };
+    roomNameFactory = jasmine.createSpy('ROOM_NAME');
     $provide.value('Signaler', Signaler);
+    $provide.value('ROOM_NAME', roomNameFactory);
   }));
 
   beforeEach(inject(function ($rootScope, _$controller_, $q) {
@@ -68,6 +70,17 @@ describe('MainCtrl', function () {
       $scope.$digest();
 
       expect(Signaler.sendToRoom).toHaveBeenCalledWith({type: 'AnnouncementMessage'});
+    });
+
+    it('uses the ROOM_NAME to init the Signaler', function () {
+      spyOn(Signaler, 'init').and.callThrough();
+      roomNameFactory.and.returnValue('/room-name');
+
+      $controller('MainCtrl', {$scope: $scope, UserMedia: FakeUserMedia});
+      mediaDeferred.resolve();
+      $scope.$digest();
+
+      expect(Signaler.init).toHaveBeenCalledWith('/room-name');
     });
 
     describe('when the user declines', function () {
