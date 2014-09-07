@@ -1,1 +1,66 @@
+body {
+  width: 100%;
+}
 
+.container {
+  width: 75%;
+  margin-left: auto;
+  margin-right: auto;
+
+  text-align: center;
+}
+
+h1 {
+  text-align: center;
+  border-bottom: 1px solid black;
+}
+
+input[type='text'] {
+  padding: 10px;
+  font-size: 1.5em;
+  border: none;
+  vertical-align: top;
+  width: 50%;
+}
+
+input[type='text']:focus {
+  outline: none;
+}
+
+button[type='submit'] {
+  padding: 10px;
+  border: 1px solid blue;
+  color: white;
+  background-color: blue;
+  border-radius: 5px;
+  font-size: 1.5em;
+}
+
+.input-group {
+  width: 50%;
+  margin: 0px auto;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+#local-video video {
+  width: 200px;
+}
+
+#remote-videos {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.remote-video {
+  display: inline-block;
+}
+
+#remote-videos video {
+  max-width: 100%;
+  width: 50%;
+  flex-basis: auto;
+  flex-grow: 1;
+  display: inline-block;
+}

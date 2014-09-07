@@ -14,5 +14,6 @@
     - %w(channel user_media signaler messages peer_connection peer_connection_config peer_connector).each do |jsfile|
       %script(src="/javascripts/#{jsfile}.js" type='text/javascript')
   %body
-    %h1 Video Conference
-    = yield
+    .container
+      %h1 R U Vidding?
+      = yield
