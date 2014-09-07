@@ -103,6 +103,7 @@ describe('PeerConnection', function () {
       $scope.$digest();
       expect(successFn).toHaveBeenCalled();
 
+      var pc = new PeerConnection({}, 12);
       pc.createAnswer().then(null, errorFn);
 
       onError();
@@ -176,6 +177,48 @@ describe('PeerConnection', function () {
       pc.addIceCandidate({candidate: 'sdp'});
 
       expect(fakeRtcPeerConnection.addIceCandidate).toHaveBeenCalledWith({candidate: "sdp"});
+    });
+  });
+
+  describe('afterDescriptionSent', function () {
+    describe('on offering peer', function () {
+      it('uses the offer deferred', function () {
+        var onSuccess;
+        fakeRtcPeerConnection.createOffer = function createOffer(success) {
+          onSuccess = success;
+        };
+
+        var pc = new PeerConnection();
+        var successFn = jasmine.createSpy('successCallback');
+
+        pc.createOffer();
+        pc.afterDescriptionSent().then(successFn);
+
+        onSuccess();
+        $scope.$digest();
+        expect(successFn).toHaveBeenCalled();
+      });
+    });
+
+    describe('on answering machine', function () {
+      it('uses the answer deferred', function () {
+        var onSuccess;
+        fakeRtcPeerConnection.createAnswer = function createAnswer(success) {
+          onSuccess = success;
+        };
+
+        var pc = new PeerConnection();
+        var successFn = jasmine.createSpy('successCallback');
+
+        pc.afterDescriptionSent().then(successFn);
+
+        expect(successFn).not.toHaveBeenCalled();
+        pc.createAnswer();
+
+        onSuccess();
+        $scope.$digest();
+        expect(successFn).toHaveBeenCalled();
+      });
     });
   });
 });

@@ -2,7 +2,7 @@ describe('PeerConnector', function () {
   beforeEach(module('video_conference'));
 
   var PeerConnector, PeerConnection, Signaler, Faye, fayeClient, fakePeerConnection, $scope, UserMedia;
-  var offerDeferred, answerDeferred, setLocalDescriptionDeferred, setRemoteDescriptionDeferred;
+  var offerDeferred, answerDeferred, setLocalDescriptionDeferred, setRemoteDescriptionDeferred, afterDescriptionSentDeferred;
 
   beforeEach(function () {
     PeerConnection = jasmine.createSpy('PeerConnection');
@@ -24,20 +24,19 @@ describe('PeerConnector', function () {
     $scope = $rootScope.$new();
 
     fakePeerConnection.createOffer = function createOffer() {
-      offerDeferred = $q.defer();
-      return offerDeferred.promise;
+      return (offerDeferred = $q.defer()).promise;
     };
     fakePeerConnection.createAnswer = function createAnswer() {
-      answerDeferred = $q.defer();
-      return answerDeferred.promise;
+      return (answerDeferred = $q.defer()).promise;
     };
     fakePeerConnection.setLocalDescription = function setLocalDescription() {
-      setLocalDescriptionDeferred = $q.defer();
-      return setLocalDescriptionDeferred.promise;
+      return (setLocalDescriptionDeferred = $q.defer()).promise;
     };
     fakePeerConnection.setRemoteDescription = function setRemoteDescription() {
-      setRemoteDescriptionDeferred = $q.defer();
-      return setRemoteDescriptionDeferred.promise;
+      return (setRemoteDescriptionDeferred = $q.defer()).promise;
+    };
+    fakePeerConnection.afterDescriptionSent = function afterDescriptionSent() {
+      return (afterDescriptionSentDeferred = $q.defer()).promise;
     };
     fakePeerConnection.addStream = jasmine.createSpy('addStream');
 
@@ -49,16 +48,10 @@ describe('PeerConnector', function () {
       spyOn(Signaler, 'sendToPeer');
     });
 
-    it('creates a peerConnection for the peerId', function () {
-      PeerConnector.createOffer({my: 'config'}, 'peer-id');
-
-      expect(PeerConnection).toHaveBeenCalledWith({my: 'config'}, 'peer-id');
-    });
-
     it('adds the peerConnection to the list of peers', function () {
       PeerConnector.createOffer(null, 'my-peer-id');
 
-      expect(PeerConnector.peers['my-peer-id']).toEqual(fakePeerConnection);
+      expect(PeerConnector.getPeer('my-peer-id')).toEqual(fakePeerConnection);
     });
 
     it('calls addStream with the UserMedia stream', function () {
@@ -103,16 +96,10 @@ describe('PeerConnector', function () {
       spyOn(Signaler, 'sendToPeer');
     });
 
-    it('creates a peerConnection for the peerId', function () {
-      PeerConnector.createAnswer({my: 'config'}, 'peer-id', null);
-
-      expect(PeerConnection).toHaveBeenCalledWith({my: 'config'}, 'peer-id');
-    });
-
     it('adds the peerConnection to the list of peers', function () {
-      PeerConnector.createAnswer(null, 'my-peer-id');
+      PeerConnector.createAnswer('my-peer-id');
 
-      expect(PeerConnector.peers['my-peer-id']).toEqual(fakePeerConnection);
+      expect(PeerConnector.getPeer('my-peer-id')).toEqual(fakePeerConnection);
     });
 
     it('calls addStream with the UserMedia stream', function () {
@@ -176,8 +163,6 @@ describe('PeerConnector', function () {
       spyOn(window, 'RTCSessionDescription').and.returnValue({fake: 'description'});
       spyOn(fakePeerConnection, 'setRemoteDescription').and.callThrough();
 
-      PeerConnector.peers['peer-id'] = fakePeerConnection;
-
       PeerConnector.connect('peer-id', {imma: 'remote description'});
 
       expect(window.RTCSessionDescription).toHaveBeenCalledWith({imma: 'remote description'});
@@ -189,12 +174,25 @@ describe('PeerConnector', function () {
     it('adds an ICE candidate for a peer', function () {
       spyOn(window, 'RTCIceCandidate').and.returnValue({fake: 'candidate'});
 
-      PeerConnector.peers['peer-id'] = fakePeerConnection;
-
-      PeerConnector.addIceCandidateTo('peer-id', {imma: 'candidate'});
+      PeerConnector.addIceCandidateTo('peer-id', {imma: 'candidate'})
+      afterDescriptionSentDeferred.resolve();
+      $scope.$digest();
 
       expect(window.RTCIceCandidate).toHaveBeenCalledWith({imma: 'candidate'});
       expect(fakePeerConnection.addIceCandidate).toHaveBeenCalledWith({fake: 'candidate'});
+    });
+  });
+
+  describe('getPeer', function () {
+    it('returns a peer if it exists', function () {
+      PeerConnector.getPeer('fake-peer-id1');
+
+      expect(PeerConnection).toHaveBeenCalled();
+      PeerConnection.calls.reset();
+
+      PeerConnector.getPeer('fake-peer-id1');
+
+      expect(PeerConnection).not.toHaveBeenCalled();
     });
   });
 });
