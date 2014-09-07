@@ -43,6 +43,7 @@ GEM
       rake
     jasmine-core (2.0.2)
     multi_json (1.10.1)
+    newrelic_rpm (3.9.3.241)
     phantomjs (1.9.7.1)
     rack (1.5.2)
     rack-protection (1.5.3)
@@ -65,5 +66,6 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.7)
   jasmine (~> 2.0.2)
+  newrelic_rpm
   rake (~> 10.0)
   video_conference!
