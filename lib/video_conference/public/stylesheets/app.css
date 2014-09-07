@@ -55,6 +55,7 @@ button[type='submit'] {
 
 .remote-video {
   display: inline-block;
+  margin: 0px auto;
 }
 
 #remote-videos video {
