@@ -43,6 +43,12 @@ button[type='submit'] {
   border-radius: 5px;
 }
 
+@media (max-width: 768px) {
+  .input-group {
+    width: 100%;
+  }
+}
+
 #local-video video {
   width: 200px;
 }
