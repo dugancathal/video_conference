@@ -31,6 +31,16 @@ The app has a local video on the main page.
 
 A signaler is born.
 
+## Testing
+
+The ruby stuff isn't tested (because that's not what this project is about), but all
+the javascript tests can be found in `spec/javascripts`. The tests can be run
+using the jasmine runner in either Chrome or Firefox by running:
+
+    rake jasmine
+
+Then, open a browser to the shown URL, usually localhost:8888.
+
 ## Contributing
 
 1. Fork it ( https://github.com/dugancathal/video_conference/fork )

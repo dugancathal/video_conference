@@ -63,7 +63,7 @@ describe('MainCtrl', function () {
 
       spyOn(Signaler, 'sendToRoom');
 
-      mediaDeferred.resolve();
+      mediaDeferred.resolve(new Blob());
       $scope.$digest();
 
       initDeferred.resolve();
@@ -77,7 +77,7 @@ describe('MainCtrl', function () {
       roomNameFactory.and.returnValue('/room-name');
 
       $controller('MainCtrl', {$scope: $scope, UserMedia: FakeUserMedia});
-      mediaDeferred.resolve();
+      mediaDeferred.resolve(new Blob());
       $scope.$digest();
 
       expect(Signaler.init).toHaveBeenCalledWith('/room-name');
