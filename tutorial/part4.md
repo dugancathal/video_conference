@@ -32,4 +32,22 @@ Let's start with a few possible configurations and work through them one by one.
 
 ## ICE Candidates and SDP
 
-To convey the information between peers,
+To convey the information between peers, WebRTC uses SDP ([Session Description Protocol](http://en.wikipedia.org/wiki/Session_Description_Protocol)). SDP is a protocol for describing streaming media that takes the form of multiple key-value pairs. WebRTC uses this to describe many things about the connection, from codecs to encryption, but the part we're interested in is the ICE candidates.
+
+An ICE candidate is a connection description that details IP and port information (among other things) for connecting to a peer. WebRTC will inspect all of the candidates found and determine the best one for the connection. There are three basic types (notice the symmetry to the top three scenarios):
+
+1. A __host__ candidate - used to communicate when a direct IP connection is possible.
+
+  ```
+  a=candidate:2706108158 2 tcp 1509957375 192.168.0.197 0 typ host generation 0
+  ```
+
+  Breaking that down:
+
+  * `a` defines an SDP `attribute`
+  * `candidate` says that this is a "candidate" attribute
+  * `2706108158` is the candidate id
+  * `2` declares this as an RTCP (RTP Control Protocol) candidate. If this was a `1`, it'd be an RTP (Real-time Transport Protocol).
+  * `tcp` is the underlying protocol (could also be `udp`)
+  * `1509957375` is the candidate priority
+  * 
