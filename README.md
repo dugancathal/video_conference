@@ -31,6 +31,11 @@ The app has a local video on the main page.
 
 A signaler is born.
 
+### step3
+
+There isn't really a given commit for step 3. This step is more
+infrastructure than anything else.
+
 ## Testing
 
 The ruby stuff isn't tested (because that's not what this project is about), but all
